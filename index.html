@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Álgebra Linear — Guia Final</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- MathJax CDN -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        packages: {'[+]': ['ams']}
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════  HUD  ═══════════════════════════ -->
+  <header class="hud" id="hud">
+    <div class="hud-brand">
+      <span class="hud-logo">∑</span>
+      <span class="hud-title">Álgebra&nbsp;Linear</span>
+      <span class="hud-subtitle">Guia de Prova Final</span>
+    </div>
+    <div class="hud-xp-block">
+      <div class="hud-xp-label">
+        <span>XP</span>
+        <span id="xp-value">0</span>
+      </div>
+      <div class="hud-bar-track">
+        <div class="hud-bar-fill" id="xp-bar"></div>
+      </div>
+      <div class="hud-level">Nível <span id="level-value">1</span></div>
+    </div>
+    <nav class="hud-nav">
+      <a href="#bloco1" class="nav-link">Terreno</a>
+      <a href="#bloco2" class="nav-link">Mecânica</a>
+      <a href="#bloco3" class="nav-link">Chefe Final</a>
+      <a href="#exercicios" class="nav-link nav-cta">Exercícios</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu">&#9776;</button>
+  </header>
+
+  <!-- Mobile nav drawer -->
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" id="drawer-close">✕</button>
+    <a href="#bloco1" class="drawer-link">Bloco 1 — Terreno</a>
+    <a href="#bloco2" class="drawer-link">Bloco 2 — Mecânica</a>
+    <a href="#bloco3" class="drawer-link">Bloco 3 — Chefe Final</a>
+    <a href="#exercicios" class="drawer-link drawer-cta">Exercícios</a>
+  </div>
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+
+  <!-- ═══════════════════════════  HERO  ══════════════════════════ -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Revisão Completa · Prova Final</p>
+      <h1 class="hero-headline">
+        Álgebra<br/><em>Linear</em>
+      </h1>
+      <p class="hero-sub">
+        Três blocos de teoria. Exercícios gamificados. Do espaço vetorial ao teorema da dimensão — tudo que você precisa para ir bem na prova.
+      </p>
+      <div class="hero-actions">
+        <a href="#bloco1" class="btn btn-primary">Começar a Revisar</a>
+        <a href="#exercicios" class="btn btn-ghost">Ir para os Exercícios</a>
+      </div>
+    </div>
+    <div class="hero-matrix" aria-hidden="true">
+      <div class="matrix-bracket left">[</div>
+      <div class="matrix-cells" id="hero-matrix-cells"></div>
+      <div class="matrix-bracket right">]</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════  BLOCO 1 — TERRENO  ══════════════════ -->
+  <section class="content-section" id="bloco1">
+    <div class="section-tag">Bloco 1</div>
+    <h2 class="section-title">O Terreno</h2>
+    <p class="section-lead">Espaços Vetoriais, Bases e como o Escalonamento revela L.I. vs L.D.</p>
+
+    <div class="theory-grid">
+
+      <!-- Card: Espaço Vetorial -->
+      <article class="theory-card card-full">
+        <h3>O que é um Espaço Vetorial?</h3>
+        <p>
+          Um <strong>espaço vetorial</strong> $V$ sobre um corpo $\mathbb{R}$ é um conjunto com duas operações
+          — adição de vetores e multiplicação por escalar — que obedecem 8 axiomas (associatividade,
+          comutatividade, elemento neutro, inverso aditivo, distribuição, etc.).
+        </p>
+        <p>Exemplos fundamentais que você deve conhecer:</p>
+        <ul class="theory-list">
+          <li>$\mathbb{R}^n$ — o espaço de todas as $n$-uplas de números reais.</li>
+          <li>$\mathcal{P}_n$ — polinômios de grau $\le n$.</li>
+          <li>$M_{m\times n}$ — matrizes reais $m \times n$.</li>
+        </ul>
+        <div class="axiom-grid">
+          <div class="axiom-item">$u + v = v + u$</div>
+          <div class="axiom-item">$(u+v)+w = u+(v+w)$</div>
+          <div class="axiom-item">$u + \mathbf{0} = u$</div>
+          <div class="axiom-item">$u + (-u) = \mathbf{0}$</div>
+          <div class="axiom-item">$\alpha(u+v) = \alpha u + \alpha v$</div>
+          <div class="axiom-item">$(\alpha+\beta)u = \alpha u + \beta u$</div>
+          <div class="axiom-item">$\alpha(\beta u) = (\alpha\beta)u$</div>
+          <div class="axiom-item">$1 \cdot u = u$</div>
+        </div>
+      </article>
+
+      <!-- Card: LI vs LD -->
+      <article class="theory-card">
+        <h3>L.I. vs L.D.</h3>
+        <p>Um conjunto $\{v_1, v_2, \ldots, v_k\}$ é:</p>
+        <div class="definition-box">
+          <p><strong>Linearmente Independente (L.I.)</strong> se a única solução de</p>
+          $$\alpha_1 v_1 + \alpha_2 v_2 + \cdots + \alpha_k v_k = \mathbf{0}$$
+          <p>é $\alpha_1 = \alpha_2 = \cdots = \alpha_k = 0$.</p>
+        </div>
+        <div class="definition-box definition-ld">
+          <p><strong>Linearmente Dependente (L.D.)</strong> se existir algum $\alpha_i \neq 0$ nessa equação — ou seja, algum vetor é combinação linear dos outros.</p>
+        </div>
+        <p class="tip"><span class="tip-icon">💡</span> <em>Dica rápida:</em> se o conjunto tiver o vetor zero, ele <strong>já é L.D.</strong> imediatamente!</p>
+      </article>
+
+      <!-- Card: Base -->
+      <article class="theory-card">
+        <h3>Bases e Dimensão</h3>
+        <p>Uma <strong>base</strong> de $V$ é um conjunto $\mathcal{B} = \{v_1, \ldots, v_n\}$ que é simultaneamente:</p>
+        <ul class="theory-list">
+          <li>L.I. — sem redundâncias.</li>
+          <li>Gerador de $V$ — todo vetor de $V$ é combinação linear dos vetores da base.</li>
+        </ul>
+        <p>A <strong>dimensão</strong> $\dim(V)$ é o número de vetores em qualquer base de $V$.</p>
+        <div class="formula-highlight">
+          $$\dim(\mathbb{R}^n) = n, \quad \dim(\mathcal{P}_n) = n+1, \quad \dim(M_{m\times n}) = mn$$
+        </div>
+        <p class="tip"><span class="tip-icon">📌</span> A base canônica de $\mathbb{R}^3$: $\{e_1, e_2, e_3\} = \{(1,0,0),(0,1,0),(0,0,1)\}$.</p>
+      </article>
+
+      <!-- Card: Escalonamento -->
+      <article class="theory-card card-full">
+        <h3>Escalonamento de Matrizes — O Método Completo</h3>
+        <p>
+          Para verificar se vetores $v_1, \ldots, v_k \in \mathbb{R}^m$ são L.I. ou L.D., monte a matriz com os vetores
+          nas <strong>colunas</strong> e aplique eliminação gaussiana (transformações elementares nas linhas):
+        </p>
+
+        <div class="steps-block">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">Monte a matriz $A = [v_1 \mid v_2 \mid \cdots \mid v_k]$.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">Aplique operações elementares de linha até obter a <strong>Forma Escalonada por Linhas (REF)</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">Conte o número de <strong>pivôs</strong> (linhas não-nulas na forma escalonada) = posto de $A$ = $\text{posto}(A)$.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>Se posto$(A) = k$</strong> → todas as colunas têm pivô → conjunto é <span class="badge badge-li">L.I.</span><br/>
+              <strong>Se posto$(A) &lt; k$</strong> → há coluna livre → conjunto é <span class="badge badge-ld">L.D.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-block">
+          <p class="example-label">Exemplo Passo a Passo</p>
+          <p>Verificar se $v_1=(1,2,3)$, $v_2=(0,1,1)$, $v_3=(1,3,4)$ são L.I.:</p>
+          $$A = \begin{pmatrix}1 & 0 & 1 \\ 2 & 1 & 3 \\ 3 & 1 & 4\end{pmatrix}$$
+          <p><strong>Passo:</strong> $L_2 \leftarrow L_2 - 2L_1$ e $L_3 \leftarrow L_3 - 3L_1$:</p>
+          $$\begin{pmatrix}1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 1 & 1\end{pmatrix}$$
+          <p><strong>Passo:</strong> $L_3 \leftarrow L_3 - L_2$:</p>
+          $$\begin{pmatrix}1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0\end{pmatrix}$$
+          <p>Apenas <strong>2 pivôs</strong> para 3 vetores → <span class="badge badge-ld">L.D.</span> — $v_3 = v_1 + v_2$.</p>
+        </div>
+      </article>
+
+    </div><!-- /theory-grid -->
+  </section>
+
+  <!-- ═══════════════════════  BLOCO 2 — MECÂNICA  ══════════════════ -->
+  <section class="content-section section-alt" id="bloco2">
+    <div class="section-tag">Bloco 2</div>
+    <h2 class="section-title">A Mecânica</h2>
+    <p class="section-lead">Transformações Lineares e as transformações especiais do plano.</p>
+
+    <div class="theory-grid">
+
+      <!-- Card: Definição TL -->
+      <article class="theory-card">
+        <h3>O que é uma Transformação Linear?</h3>
+        <p>Uma função $T: V \to W$ entre espaços vetoriais é uma <strong>transformação linear</strong> se, para todos $u, v \in V$ e $\alpha \in \mathbb{R}$:</p>
+        <div class="rules-block">
+          <div class="rule-card">
+            <div class="rule-number">Regra 1</div>
+            <div class="rule-name">Preservação da Soma</div>
+            $$T(u + v) = T(u) + T(v)$$
+          </div>
+          <div class="rule-card">
+            <div class="rule-number">Regra 2</div>
+            <div class="rule-name">Preservação do Escalar</div>
+            $$T(\alpha \cdot u) = \alpha \cdot T(u)$$
+          </div>
+        </div>
+        <p>Combinando as duas regras, obtemos a forma geral:</p>
+        $$T(\alpha u + \beta v) = \alpha T(u) + \beta T(v)$$
+        <p class="tip"><span class="tip-icon">🔑</span> Toda TL <strong>mapeia o vetor zero no vetor zero</strong>: $T(\mathbf{0}) = \mathbf{0}$. Se isso não acontecer, não é TL!</p>
+      </article>
+
+      <!-- Card: Matriz da TL -->
+      <article class="theory-card">
+        <h3>A Matriz de uma Transformação Linear</h3>
+        <p>Qualquer TL $T: \mathbb{R}^n \to \mathbb{R}^m$ pode ser representada por uma <strong>matriz $A$ de ordem $m \times n$</strong>:</p>
+        $$T(x) = Ax$$
+        <p>Para encontrar $A$, basta calcular a imagem de cada vetor da base canônica:</p>
+        $$A = \bigl[T(e_1) \mid T(e_2) \mid \cdots \mid T(e_n)\bigr]$$
+        <div class="example-block">
+          <p class="example-label">Exemplo</p>
+          <p>Se $T(x,y) = (2x+y,\ x-3y)$, então:</p>
+          $$T(e_1) = T(1,0) = (2,1), \quad T(e_2) = T(0,1) = (1,-3)$$
+          $$A = \begin{pmatrix}2 & 1\\1 & -3\end{pmatrix}$$
+        </div>
+      </article>
+
+      <!-- Card: Rotação -->
+      <article class="theory-card">
+        <h3>Rotação de Ângulo $\theta$ em $\mathbb{R}^2$</h3>
+        <p>Rotaciona todo vetor do plano por um ângulo $\theta$ no sentido <strong>anti-horário</strong>:</p>
+        $$R_\theta = \begin{pmatrix}\cos\theta & -\sin\theta \\ \sin\theta & \cos\theta\end{pmatrix}$$
+        <div class="transform-examples">
+          <div class="transform-eg">
+            <span class="transform-label">$\theta = 90°$</span>
+            $$\begin{pmatrix}0 & -1 \\ 1 & 0\end{pmatrix}$$
+          </div>
+          <div class="transform-eg">
+            <span class="transform-label">$\theta = 180°$</span>
+            $$\begin{pmatrix}-1 & 0 \\ 0 & -1\end{pmatrix}$$
+          </div>
+          <div class="transform-eg">
+            <span class="transform-label">$\theta = 270°$</span>
+            $$\begin{pmatrix}0 & 1 \\ -1 & 0\end{pmatrix}$$
+          </div>
+        </div>
+        <p class="tip"><span class="tip-icon">💡</span> $\det(R_\theta) = 1$ sempre — rotações preservam área e orientação.</p>
+      </article>
+
+      <!-- Card: Reflexão -->
+      <article class="theory-card">
+        <h3>Reflexões em $\mathbb{R}^2$</h3>
+        <p>Refletem vetores em relação a um eixo:</p>
+        <div class="transform-examples">
+          <div class="transform-eg">
+            <span class="transform-label">Eixo $x$</span>
+            $$\begin{pmatrix}1 & 0 \\ 0 & -1\end{pmatrix}$$
+          </div>
+          <div class="transform-eg">
+            <span class="transform-label">Eixo $y$</span>
+            $$\begin{pmatrix}-1 & 0 \\ 0 & 1\end{pmatrix}$$
+          </div>
+          <div class="transform-eg">
+            <span class="transform-label">$y = x$</span>
+            $$\begin{pmatrix}0 & 1 \\ 1 & 0\end{pmatrix}$$
+          </div>
+        </div>
+        <p>Para reflexão em relação à reta $y = x \tan\theta$:</p>
+        $$F_\theta = \begin{pmatrix}\cos 2\theta & \sin 2\theta \\ \sin 2\theta & -\cos 2\theta\end{pmatrix}$$
+        <p class="tip"><span class="tip-icon">📌</span> $\det(F) = -1$ sempre — reflexões invertem a orientação.</p>
+      </article>
+
+      <!-- Card: Dilatação -->
+      <article class="theory-card card-full">
+        <h3>Dilatação (Homotetia) e Projeções</h3>
+        <div class="theory-grid-inner">
+          <div>
+            <p><strong>Dilatação uniforme</strong> — escala por fator $k$ em todas as direções:</p>
+            $$D_k = \begin{pmatrix}k & 0 \\ 0 & k\end{pmatrix} = k\,I_2$$
+            <p>Se $k > 1$: expansão. Se $0 < k < 1$: contração. Se $k < 0$: expansão + rotação de 180°.</p>
+          </div>
+          <div>
+            <p><strong>Dilatação não-uniforme</strong> — escalas diferentes por eixo:</p>
+            $$D_{k_1,k_2} = \begin{pmatrix}k_1 & 0 \\ 0 & k_2\end{pmatrix}$$
+            <p><strong>Projeção sobre o eixo $x$:</strong></p>
+            $$P_x = \begin{pmatrix}1 & 0 \\ 0 & 0\end{pmatrix}$$
+          </div>
+        </div>
+        <div class="definition-box" style="margin-top:1rem">
+          <p>
+            <strong>Como verificar se $T$ é TL:</strong> aplique as duas regras nas definições. Ou, se $T$ é dada por fórmula,
+            decomponha $T(x)$ em termos de $x$: se houver termos constantes ou não-lineares (como $x^2$, $|x|$), <strong>não é TL</strong>.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════  BLOCO 3 — CHEFE FINAL  ══════════════ -->
+  <section class="content-section" id="bloco3">
+    <div class="section-tag">Bloco 3</div>
+    <h2 class="section-title">O Chefe Final</h2>
+    <p class="section-lead">Núcleo, Imagem, Dimensão e o Teorema Núcleo-Imagem.</p>
+
+    <div class="theory-grid">
+
+      <!-- Card: Núcleo -->
+      <article class="theory-card">
+        <h3>Núcleo (Kernel) de $T$</h3>
+        <p>O <strong>núcleo</strong> de $T: V \to W$ é o conjunto de todos os vetores que vão para o zero:</p>
+        $$\ker(T) = \{v \in V \mid T(v) = \mathbf{0}\}$$
+        <p>Se $T$ é representada por matriz $A$, o núcleo é o <strong>espaço nulo</strong> de $A$:</p>
+        $$\ker(T) = \text{Nul}(A) = \{x \mid Ax = \mathbf{0}\}$$
+        <div class="steps-block">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">Escreva o sistema $Ax = \mathbf{0}$ (sistema homogêneo).</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">Escalone $A$ até a forma reduzida.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">Identifique as variáveis livres (colunas sem pivô) e exprima as variáveis básicas em função delas.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">Escreva a solução geral; os vetores que geram a solução formam uma base para $\ker(T)$.</div>
+          </div>
+        </div>
+        <p class="tip"><span class="tip-icon">🔑</span> $T$ é injetora (1-a-1) $\Leftrightarrow$ $\ker(T) = \{\mathbf{0}\}$ $\Leftrightarrow$ $\dim(\ker T) = 0$.</p>
+      </article>
+
+      <!-- Card: Imagem -->
+      <article class="theory-card">
+        <h3>Imagem de $T$</h3>
+        <p>A <strong>imagem</strong> de $T: V \to W$ é o conjunto de todos os vetores que $T$ pode produzir:</p>
+        $$\text{Im}(T) = \{T(v) \mid v \in V\} = \{Ax \mid x \in \mathbb{R}^n\}$$
+        <p>A imagem é o <strong>espaço coluna</strong> de $A$ — o subespaço gerado pelas colunas de $A$:</p>
+        $$\text{Im}(T) = \text{Col}(A) = \text{span}\{a_1, a_2, \ldots, a_n\}$$
+        <div class="steps-block">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">Escalone $A$ e identifique as <strong>colunas com pivô</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">As colunas correspondentes de $A$ <strong>original</strong> (não escalonada!) formam uma base para $\text{Im}(T)$.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">A dimensão da imagem é o número de pivôs = posto$(A)$.</div>
+          </div>
+        </div>
+        <p class="tip"><span class="tip-icon">🔑</span> $T$ é sobrejetora $\Leftrightarrow$ $\text{Im}(T) = W$ $\Leftrightarrow$ posto$(A) = m$ (número de linhas).</p>
+      </article>
+
+      <!-- Card: Teorema da Dimensão -->
+      <article class="theory-card card-full">
+        <h3>O Teorema Núcleo-Imagem (Teorema da Dimensão)</h3>
+        <p>Este é o resultado central do curso. Para qualquer $T: V \to W$ com $\dim(V) = n$:</p>
+        <div class="formula-highlight formula-big">
+          $$\dim(\ker T) + \dim(\text{Im}\, T) = \dim(V)$$
+        </div>
+        <p>Em termos de posto (posto$(A)$ = $\dim(\text{Im}\,T)$) e nulidade (nulidade$(A)$ = $\dim(\ker T)$):</p>
+        $$\text{posto}(A) + \text{nulidade}(A) = n \quad \text{(número de colunas de } A\text{)}$$
+
+        <div class="theorem-table">
+          <div class="theorem-row theorem-header">
+            <span>Situação</span>
+            <span>posto$(A)$</span>
+            <span>nulidade$(A)$</span>
+            <span>$T$ é…</span>
+          </div>
+          <div class="theorem-row">
+            <span>$m = n$ e posto máximo</span>
+            <span>$n$</span>
+            <span>$0$</span>
+            <span class="badge badge-li">bijetora</span>
+          </div>
+          <div class="theorem-row">
+            <span>posto$(A) < n$</span>
+            <span>$r < n$</span>
+            <span>$n - r$</span>
+            <span class="badge badge-ld">não injetora</span>
+          </div>
+          <div class="theorem-row">
+            <span>posto$(A) < m$</span>
+            <span>$r < m$</span>
+            <span>—</span>
+            <span class="badge badge-ld">não sobrejetora</span>
+          </div>
+        </div>
+
+        <div class="example-block">
+          <p class="example-label">Exemplo Completo — $\mathbb{R}^4$</p>
+          <p>Seja $T: \mathbb{R}^4 \to \mathbb{R}^3$ dada pela matriz:</p>
+          $$A = \begin{pmatrix}1 & 2 & 0 & -1 \\ 0 & 1 & -1 & 2 \\ 1 & 3 & -1 & 1\end{pmatrix}$$
+          <p>Escalonando: $L_3 \leftarrow L_3 - L_1$:</p>
+          $$\begin{pmatrix}1 & 2 & 0 & -1 \\ 0 & 1 & -1 & 2 \\ 0 & 1 & -1 & 2\end{pmatrix} \xrightarrow{L_3-L_2} \begin{pmatrix}1 & 2 & 0 & -1 \\ 0 & 1 & -1 & 2 \\ 0 & 0 & 0 & 0\end{pmatrix}$$
+          <p>
+            <strong>Pivôs:</strong> colunas 1 e 2 → posto$(A) = 2$.<br/>
+            <strong>Nulidade:</strong> $4 - 2 = 2$ → $\dim(\ker T) = 2$.<br/>
+            <strong>Im$(T)$:</strong> gerada pelas colunas 1 e 2 de $A$ original: $\{(1,0,1),\ (2,1,3)\}$.<br/>
+            Verificação: $\underbrace{2}_{\dim\ker} + \underbrace{2}_{\dim\text{Im}} = \underbrace{4}_{\dim\mathbb{R}^4}$ ✓
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════  EXERCÍCIOS  ═════════════════════════ -->
+  <section class="content-section section-exercises" id="exercicios">
+    <div class="section-tag">Exercícios</div>
+    <h2 class="section-title">Arena de Exercícios</h2>
+    <p class="section-lead">Responda, ganhe XP, suba de nível. Cada erro vem com a resolução completa.</p>
+
+    <!-- Stats bar -->
+    <div class="exercise-stats">
+      <div class="stat-pill">
+        <span class="stat-icon">✅</span>
+        <span id="stat-correct">0</span> acertos
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">❌</span>
+        <span id="stat-wrong">0</span> erros
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">⚡</span>
+        <span id="stat-xp">0</span> XP total
+      </div>
+    </div>
+
+    <!-- Progress through questions -->
+    <div class="q-progress-bar">
+      <div class="q-progress-fill" id="q-progress-fill"></div>
+    </div>
+    <p class="q-progress-label">Questão <span id="q-current">1</span> de <span id="q-total">10</span></p>
+
+    <!-- Exercise Card Container -->
+    <div class="exercise-arena" id="exercise-arena">
+      <!-- JS will inject cards here -->
+    </div>
+
+    <!-- Restart -->
+    <div class="restart-block" id="restart-block" style="display:none">
+      <p class="restart-msg">Você completou todas as questões! 🎉</p>
+      <p class="restart-score">Pontuação final: <strong id="final-score">—</strong></p>
+      <button class="btn btn-primary" onclick="App.restart()">Reiniciar Exercícios</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════  MODAL DE RESOLUÇÃO  ════════════════════ -->
+  <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <div id="modal-verdict"></div>
+        <button class="modal-close" id="modal-close" aria-label="Fechar">✕</button>
+      </div>
+      <h3 id="modal-title" class="modal-title"></h3>
+      <div id="modal-body" class="modal-body"></div>
+      <button class="btn btn-primary modal-btn" id="modal-next">Próxima Questão →</button>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Álgebra Linear — Guia de Prova Final &nbsp;·&nbsp; Bons estudos! 🎓</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
