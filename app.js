@@ -106,39 +106,38 @@ const App = (function() {
   // ─── ESTADO DA APLICAÇÃO ───
   let currentQIndex = 0;
   let stats = { correct: 0, wrong: 0, xp: 0 };
+  let els = {}; // Vazio inicialmente
 
-  // ─── SELETORES DOM ───
-  const els = {
-    arena: document.getElementById('exercise-arena'),
-    qCurrent: document.getElementById('q-current'),
-    qTotal: document.getElementById('q-total'),
-    qProgress: document.getElementById('q-progress-fill'),
-    statCorrect: document.getElementById('stat-correct'),
-    statWrong: document.getElementById('stat-wrong'),
-    statXP: document.getElementById('stat-xp'),
-    hudXP: document.getElementById('xp-value'),
-    hudXPBar: document.getElementById('xp-bar'),
-    hudLevel: document.getElementById('level-value'),
-    restartBlock: document.getElementById('restart-block'),
-    finalScore: document.getElementById('final-score'),
-    
-    // Modal
-    modalBackdrop: document.getElementById('modal-backdrop'),
-    modalVerdict: document.getElementById('modal-verdict'),
-    modalTitle: document.getElementById('modal-title'),
-    modalBody: document.getElementById('modal-body'),
-    modalNextBtn: document.getElementById('modal-next'),
-    modalCloseBtn: document.getElementById('modal-close'),
-
-    // Menus
-    burger: document.getElementById('burger'),
-    drawer: document.getElementById('drawer'),
-    drawerClose: document.getElementById('drawer-close'),
-    drawerOverlay: document.getElementById('drawer-overlay')
-  };
-
-  // ─── INICIALIZAÇÃO ───
+  // ─── INICIALIZAÇÃO SEGURA ───
   function init() {
+    // Mapeamos os IDs só depois que o HTML estiver pronto
+    els = {
+      arena: document.getElementById('exercise-arena'),
+      qCurrent: document.getElementById('q-current'),
+      qTotal: document.getElementById('q-total'),
+      qProgress: document.getElementById('q-progress-fill'),
+      statCorrect: document.getElementById('stat-correct'),
+      statWrong: document.getElementById('stat-wrong'),
+      statXP: document.getElementById('stat-xp'),
+      hudXP: document.getElementById('xp-value'),
+      hudXPBar: document.getElementById('xp-bar'),
+      hudLevel: document.getElementById('level-value'),
+      restartBlock: document.getElementById('restart-block'),
+      finalScore: document.getElementById('final-score'),
+      modalBackdrop: document.getElementById('modal-backdrop'),
+      modalVerdict: document.getElementById('modal-verdict'),
+      modalTitle: document.getElementById('modal-title'),
+      modalBody: document.getElementById('modal-body'),
+      modalNextBtn: document.getElementById('modal-next'),
+      modalCloseBtn: document.getElementById('modal-close'),
+      burger: document.getElementById('burger'),
+      drawer: document.getElementById('drawer'),
+      drawerClose: document.getElementById('drawer-close'),
+      drawerOverlay: document.getElementById('drawer-overlay')
+    };
+
+    if (!els.arena) return; // Trava contra erro caso o HTML esteja faltando
+
     els.qTotal.textContent = questions.length;
     setupNav();
     setupModal();
@@ -151,9 +150,9 @@ const App = (function() {
       els.drawer.classList.toggle('open');
       els.drawerOverlay.classList.toggle('show');
     };
-    els.burger.addEventListener('click', toggleDrawer);
-    els.drawerClose.addEventListener('click', toggleDrawer);
-    els.drawerOverlay.addEventListener('click', toggleDrawer);
+    if (els.burger) els.burger.addEventListener('click', toggleDrawer);
+    if (els.drawerClose) els.drawerClose.addEventListener('click', toggleDrawer);
+    if (els.drawerOverlay) els.drawerOverlay.addEventListener('click', toggleDrawer);
     
     document.querySelectorAll('.drawer-link').forEach(link => {
       link.addEventListener('click', toggleDrawer);
@@ -171,11 +170,9 @@ const App = (function() {
 
     const q = questions[currentQIndex];
     
-    // Atualizar barra de progresso inferior
     els.qCurrent.textContent = currentQIndex + 1;
     els.qProgress.style.width = `${((currentQIndex) / questions.length) * 100}%`;
 
-    // Montar o HTML do Card
     const card = document.createElement('div');
     card.className = 'ex-card';
     
@@ -210,7 +207,6 @@ const App = (function() {
 
     els.arena.appendChild(card);
 
-    // Adicionar eventos de clique nas alternativas
     const btns = card.querySelectorAll('.ex-choice');
     btns.forEach(btn => {
       btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.index), btns, q));
@@ -221,9 +217,7 @@ const App = (function() {
 
   // ─── PROCESSAR RESPOSTA ───
   function handleAnswer(selectedIndex, allBtns, q) {
-    // Desabilitar botões
     allBtns.forEach(b => b.disabled = true);
-
     const isCorrect = selectedIndex === q.correct;
     
     if (isCorrect) {
@@ -232,20 +226,18 @@ const App = (function() {
       addXP(q.xp);
     } else {
       allBtns[selectedIndex].classList.add('wrong');
-      allBtns[q.correct].classList.add('correct'); // Mostra a correta
+      allBtns[q.correct].classList.add('correct');
       stats.wrong++;
     }
 
     updateStatsHUD();
-    
-    // Pequeno atraso para o usuário ver a cor no botão antes do modal abrir
     setTimeout(() => openModal(isCorrect, q), 600);
   }
 
-  // ─── GAMIFICAÇÃO (XP & NÍVEL) ───
+  // ─── GAMIFICAÇÃO ───
   function addXP(amount) {
     stats.xp += amount;
-    const level = Math.floor(stats.xp / 150) + 1; // A cada 150 XP, sobe um nível
+    const level = Math.floor(stats.xp / 150) + 1; 
     const progress = (stats.xp % 150) / 150 * 100;
 
     els.hudXP.textContent = stats.xp;
@@ -259,15 +251,15 @@ const App = (function() {
     els.statWrong.textContent = stats.wrong;
   }
 
-  // ─── MODAL DE FEEDBACK ───
+  // ─── MODAL ───
   function setupModal() {
     const closeModal = () => {
       els.modalBackdrop.classList.remove('open');
       currentQIndex++;
-      renderQuestion(); // Avança ao fechar o modal
+      renderQuestion(); 
     };
-    els.modalNextBtn.addEventListener('click', closeModal);
-    els.modalCloseBtn.addEventListener('click', closeModal);
+    if (els.modalNextBtn) els.modalNextBtn.addEventListener('click', closeModal);
+    if (els.modalCloseBtn) els.modalCloseBtn.addEventListener('click', closeModal);
   }
 
   function openModal(isCorrect, q) {
@@ -284,21 +276,18 @@ const App = (function() {
     triggerMathJax();
   }
 
-  // ─── TELA FINAL ───
   function showEndScreen() {
     els.qProgress.style.width = '100%';
     els.restartBlock.style.display = 'block';
     els.finalScore.textContent = `${stats.xp} XP (Nível ${els.hudLevel.textContent})`;
   }
 
-  // ─── UTILITÁRIO: MATHJAX ───
   function triggerMathJax() {
     if (window.MathJax && window.MathJax.typesetPromise) {
       window.MathJax.typesetPromise().catch((err) => console.log('Erro MathJax: ', err));
     }
   }
 
-  // ─── API PÚBLICA ───
   return {
     start: init,
     restart: () => {
@@ -314,5 +303,10 @@ const App = (function() {
   };
 })();
 
-// Iniciar a aplicação quando o DOM carregar
-document.addEventListener('DOMContentLoaded', App.start);
+// ─── STARTUP BLINDADO ───
+// Resolve o problema do script carregar em momentos errados
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', App.start);
+} else {
+  App.start();
+}
